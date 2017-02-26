@@ -15,16 +15,16 @@
 
 
 
-<meta name="description" content="上一篇我们介绍了NestedScrollingParent的使用实例，其实关于’com.android.support:design’这个包有很多东西值得我们学习。一方面是google一直推崇的material设计风格可以让我们的界面更加符合当下app设计潮流，另一方面design包中的代码有兴趣可以阅读一下。今天我们介绍的是可折叠ToolBar，这是design库中的一部分，我们会简单介绍它的">
+<meta name="description" content="上一篇我们介绍了NestedScrollingParent的使用实例，其实关于’com.android.support:design’这个包有很多东西值得我们学习。一方面是google一直推崇的material设计风格可以让我们的界面更加符合当下app设计潮流，另一方面design包中的代码有兴趣可以阅读一下。今天我们介绍的是可折叠ToolBar，这是design库中的一部分，我们会简单介绍">
 <meta property="og:type" content="article">
 <meta property="og:title" content="CoordinatorLayout 学习笔记 --可折叠ToolBar（一）">
 <meta property="og:url" content="http://yoursite.com/2015/12/03/CoordinatorLayout 学习笔记 --可折叠ToolBar（一）/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="上一篇我们介绍了NestedScrollingParent的使用实例，其实关于’com.android.support:design’这个包有很多东西值得我们学习。一方面是google一直推崇的material设计风格可以让我们的界面更加符合当下app设计潮流，另一方面design包中的代码有兴趣可以阅读一下。今天我们介绍的是可折叠ToolBar，这是design库中的一部分，我们会简单介绍它的">
-<meta property="og:updated_time" content="2017-02-26T05:08:48.794Z">
+<meta property="og:description" content="上一篇我们介绍了NestedScrollingParent的使用实例，其实关于’com.android.support:design’这个包有很多东西值得我们学习。一方面是google一直推崇的material设计风格可以让我们的界面更加符合当下app设计潮流，另一方面design包中的代码有兴趣可以阅读一下。今天我们介绍的是可折叠ToolBar，这是design库中的一部分，我们会简单介绍">
+<meta property="og:updated_time" content="2017-02-26T05:12:59.915Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="CoordinatorLayout 学习笔记 --可折叠ToolBar（一）">
-<meta name="twitter:description" content="上一篇我们介绍了NestedScrollingParent的使用实例，其实关于’com.android.support:design’这个包有很多东西值得我们学习。一方面是google一直推崇的material设计风格可以让我们的界面更加符合当下app设计潮流，另一方面design包中的代码有兴趣可以阅读一下。今天我们介绍的是可折叠ToolBar，这是design库中的一部分，我们会简单介绍它的">
+<meta name="twitter:description" content="上一篇我们介绍了NestedScrollingParent的使用实例，其实关于’com.android.support:design’这个包有很多东西值得我们学习。一方面是google一直推崇的material设计风格可以让我们的界面更加符合当下app设计潮流，另一方面design包中的代码有兴趣可以阅读一下。今天我们介绍的是可折叠ToolBar，这是design库中的一部分，我们会简单介绍">
 
 <link rel="apple-touch-icon" href= "/apple-touch-icon.png">
 
@@ -292,9 +292,10 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-        <h2 id=""><a href="#" class="headerlink" title=" "></a><excerpt in="" index="" |="" 首页摘要=""> </excerpt></h2><p>上一篇我们介绍了NestedScrollingParent的使用实例，其实关于’com.android.support:design’这个包有很多东西值得我们学习。一方面是google一直推崇的material设计风格可以让我们的界面更加符合当下app设计潮流，另一方面design包中的代码有兴趣可以阅读一下。今天我们介绍的是可折叠ToolBar，这是design库中的一部分，我们会简单介绍它的用法，重点是我们会根据源码来看一下google的大神们是如何实现的。</p>
-<hr>
-<p>+<a id="more"></a></p>
+        <excerpt in="" index="" |="" 首页摘要=""> 
+
+<p>上一篇我们介绍了NestedScrollingParent的使用实例，其实关于’com.android.support:design’这个包有很多东西值得我们学习。一方面是google一直推崇的material设计风格可以让我们的界面更加符合当下app设计潮流，另一方面design包中的代码有兴趣可以阅读一下。今天我们介绍的是可折叠ToolBar，这是design库中的一部分，我们会简单介绍它的用法，重点是我们会根据源码来看一下google的大神们是如何实现的。</p>
+<a id="more"></a>
 <p>##效果<br>效果如下图，可以看到我们实现的效果很简单，下面是一个RecyclerView，上面是ToolBar，这个ToolBar很特殊，当我们下拉时会出现一张图片为背景，下面是文字。随着我们将ToolBar上划，我们会发现图片会慢慢消失，一个典型的ToolBar会出现。这个过程毫不生硬，用到了很多动画和渐变效果。包括字体的位置和颜色以及背景图片的消失出现透明度等等。</p>
 <p>##用法</p>
 <p>首先，在xml中布置这个效果时，感觉怪怪的，不知道为什么要这么做，不过没有关系，这些问题我们可以从源码中寻找答案。</p>
@@ -349,7 +350,7 @@
 
 
 
-</the>
+</the></excerpt>
       
     </div>
     
@@ -360,7 +361,7 @@
         <p><span>本文标题:</span><a href="/2015/12/03/CoordinatorLayout 学习笔记 --可折叠ToolBar（一）/">CoordinatorLayout 学习笔记 --可折叠ToolBar（一）</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">蝎子莱莱</a></p>
         <p><span>发布时间:</span>2015-12-03, 00:00:00</p>
-        <p><span>最后更新:</span>2017-02-26, 13:08:48</p>
+        <p><span>最后更新:</span>2017-02-26, 13:12:59</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2015/12/03/CoordinatorLayout 学习笔记 --可折叠ToolBar（一）/" title="CoordinatorLayout 学习笔记 --可折叠ToolBar（一）">http://yoursite.com/2015/12/03/CoordinatorLayout 学习笔记 --可折叠ToolBar（一）/</a>
             <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2015/12/03/CoordinatorLayout 学习笔记 --可折叠ToolBar（一）/　　作者: 蝎子莱莱" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
@@ -390,7 +391,7 @@
     <div id="toc" class="toc-article">
         <strong class="toc-title">文章目录</strong>
         
-            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#"><span class="toc-number">1.</span> <span class="toc-text"> </span></a></li></ol>
+            
         
     </div>
     <style>
