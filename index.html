@@ -259,102 +259,6 @@
 </nav>
       <div class="body-wrap">
   
-    <article id="post-CoordinatorLayout 学习笔记 --可折叠ToolBar（一）" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2017/02/26/CoordinatorLayout 学习笔记 --可折叠ToolBar（一）/" class="article-date">
-      <time datetime="2017-02-25T16:09:45.614Z" itemprop="datePublished">2017-02-26</time>
-</a>
-
-
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-        <h1 id="CoordinatorLayout-学习笔记-–可折叠ToolBar（一）"><a href="#CoordinatorLayout-学习笔记-–可折叠ToolBar（一）" class="headerlink" title="CoordinatorLayout 学习笔记 –可折叠ToolBar（一）"></a>CoordinatorLayout 学习笔记 –可折叠ToolBar（一）</h1><hr>
-<p>上一篇我们介绍了NestedScrollingParent的使用实例，其实关于’com.android.support:design’这个包有很多东西值得我们学习。一方面是google一直推崇的material设计风格可以让我们的界面更加符合当下app设计潮流，另一方面design包中的代码有兴趣可以阅读一下。今天我们介绍的是可折叠ToolBar，这是design库中的一部分，我们会简单介绍它的用法，重点是我们会根据源码来看一下google的大神们是如何实现的。</p>
-<hr>
-<p>##效果<br>效果如下图，可以看到我们实现的效果很简单，下面是一个RecyclerView，上面是ToolBar，这个ToolBar很特殊，当我们下拉时会出现一张图片为背景，下面是文字。随着我们将ToolBar上划，我们会发现图片会慢慢消失，一个典型的ToolBar会出现。这个过程毫不生硬，用到了很多动画和渐变效果。包括字体的位置和颜色以及背景图片的消失出现透明度等等。</p>
-<p>##用法</p>
-<p>首先，在xml中布置这个效果时，感觉怪怪的，不知道为什么要这么做，不过没有关系，这些问题我们可以从源码中寻找答案。</p>
-<p>我先把xml中的布局结构贴出来</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">&lt;android.support.design.widget.CoordinatorLayout&gt;</div><div class="line">  &lt;android.support.design.widget.AppBarLayout&gt;</div><div class="line">    &lt;android.support.design.widget.CollapsingToolbarLayout&gt;</div><div class="line">        &lt;ImageView/&gt;</div><div class="line">        &lt;android.support.v7.widget.Toolbar/&gt;</div><div class="line">  &lt;android.support.v7.widget.RecyclerView/&gt;</div></pre></td></tr></table></figure>
-<p>另外，在RecyclerView中需要加这样一行，<strong>app:layout_behavior=”@string/appbar_scrolling_view_behavior”</strong>，这样就完成了RecyclerView与ToolBar的滑动关联，详细的代码可以查看</p>
-<p>在Activity中，我们需要做下面几件事</p>
-<blockquote>
-<ul>
-<li>setSupportActionBar(mToolbar);</li>
-<li>mCollapsingToolbarLayout.setTitle(“设置ToolBar的标题”)</li>
-<li>mCollapsingToolbarLayout.setExpandedTitleColor(Color.WHITE);<br>//设置还没收缩时状态下字体颜色</li>
-<li>mCollapsingToolbarLayout.setCollapsedTitleTextColor(Color.GREEN);<br>//设置收缩后Toolbar上字体的颜色</li>
-</ul>
-</blockquote>
-<p>至此，我们就可以实现图中的效果，详细代码点击</p>
-<p>##源码解读</p>
-<p>我们前面实现的效果其实是很多元素共同发生作用产生的效果，一起分析太过于复杂，所以我这里会一次介绍下面两个部分</p>
-<blockquote>
-<ul>
-<li>AppBarLayout相关</li>
-<li>CollapsingToolbarLayout相关</li>
-</ul>
-</blockquote>
-<p>我们先说AppBarLayout，这个类的源码有将近1500行，算是比较复杂的。我们可以看到里面有两个Behavior值得我们关注</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">public static class Behavior extends HeaderBehavior&lt;AppBarLayout&gt;</div></pre></td></tr></table></figure>
-<p>这个Behavior是APPBarLayout的默认Behavior，在一开始就已经设置好了，对于我们来说基本上是透明的。这个类基本上占据了AppBarLayout中将近一半的代码。代码虽多，但基本上是围绕下面这几个接口展开的。<br>这几个接口大家应该都很熟悉了。</p>
-<blockquote>
-<ul>
-<li>onStartNestedScroll</li>
-<li>onNestedPreScroll</li>
-<li>onNestedScroll</li>
-<li>onNestedFling</li>
-<li>onMeasureChild</li>
-<li>onLayoutChild</li>
-</ul>
-</blockquote>
-<p>onMeasureChild做了很简单的一件事，如果设置的是wrap_content，我们就将其修改为 unspecified，因为APPBarLayout中的布局是可滑动的，所以子view里面的布局是可以大于AppBarLayout的总布局的，这就是我们要修改为unspecified的原因。     </p>
-<p>onLayoutChild中根据pendingAction和animate的状态，设置offset参数，说的通熟一点就是设置APPBarLayout在CoordinatorLayout的位置，并将offset参数通知给listener。其中，pendingAction的初始状态是由xml注入的，但我也找不到究竟是哪设置的…animate是由用户设置的是否打开动画开关。</p>
-<p>在onNestedProScroll中，我们只需要关注一个参数就可以，他就是consumed[1],这个参数的含义在上一篇中就已经讲过了，我们可以看到在AppBarLayout中</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">consumed[1] = scroll(coordinatorLayout, child, dy, min, max);</div></pre></td></tr></table></figure>
-<p>我们来看一下scroll这个函数最终调用的是如下代码</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">int setHeaderTopBottomOffset(CoordinatorLayout parent, V header, int newOffset,int minOffset, int maxOffset) &#123;</div><div class="line">        final int curOffset = getTopAndBottomOffset();</div><div class="line">        int consumed = 0;</div><div class="line"></div><div class="line">        if (minOffset != 0 &amp;&amp; curOffset &gt;= minOffset &amp;&amp; curOffset &lt;= maxOffset) &#123;</div><div class="line">            newOffset = </div><div class="line">            MathUtils.constrain(newOffset, minOffset, maxOffset);</div><div class="line"></div><div class="line">            if (curOffset != newOffset) &#123;</div><div class="line">                setTopAndBottomOffset(newOffset);</div><div class="line">                consumed = curOffset - newOffset;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        return consumed;</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
-<p>这几行代码其实做了一件很简单的事，因为要计算consumed值，所以要知道AppBarLayout移动了多少，为了数值正确，要根据不同的滑动方向计算minOffset和maxOffset两个边界值，正确的数值应该是在这两个值中间的（MathUtil.constrain这个函数就是在做这件事），最后将原来的offset值减去正确的offset值（consumed=curOffset-newOffset）</p>
-<p>onNestedScroll中做了类似的事情，也就是在子布局滑动之后，AppBarLayout又检测了一次(理论上来说AppBarLayout在onNestedProScroll中已经做了处理，不知道这里为什么要再检测一次，实在不懂)</p>
-<p>onNestedFling有一个返回参数，代表的是behavior是否消耗fling(表示快速滑动，后面都用fling表示)事件，源码中通过consume（子布局是否消耗了fling事件），如果没有，那么我们自己就需要滑动<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">if (!consumed) &#123;</div><div class="line">  flung = fling(coordinatorLayout, child, -child.getTotalScrollRange(), 0, -velocityY);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>fling函数是在Behavior的父类HeaderBehavior（HeaderBehavior和HeaderScrollingBehavior很像，前者是用在AppBarLayout上的behavior，后者是用在AppBarLayout下面滚动布局的Behavior（如我们例子中的RecyclerView）），通过源码我们可以看到了还是像以前一样用到了Scroller和Runnable线程通过更新offset值来实现快速滑动效果，从如下的Runnable run函数不难看出<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">@Override</div><div class="line">    public void run() &#123;</div><div class="line">        if (mLayout != null &amp;&amp; mScroller != null) &#123;</div><div class="line">            if (mScroller.computeScrollOffset()) &#123;</div><div class="line">                setHeaderTopBottomOffset(mParent, mLayout, mScroller.getCurrY());</div><div class="line">               ViewCompat.postOnAnimation(mLayout, this);</div><div class="line">            &#125; else &#123;</div><div class="line">                onFlingFinished(mParent, mLayout);</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div></pre></td></tr></table></figure></p>
-<p>如果consume为true，也就是子view消耗了fling事件，这时通过动画调整offset值使之回到‘collapsed’状态，和前面onNestedScroll中的实现是类似的，调用的也是animateOffsetTo函数。有兴趣可以参考源码。</p>
-<p>这篇文章只是大概走了一遍AppBarLayout的源码，重点放在了几个核心方法的功能上，好多涉及计算的地方都直接掠过去了。源码中有太多值得推敲的地方，下一篇将介绍CollapsingToolbarLayout源码解读。</p>
-
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-
-      
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
     <article id="post-浅入NestedScrollingParent" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
@@ -449,6 +353,68 @@
       
 
       
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-CoordinatorLayout 学习笔记 --可折叠ToolBar（一）" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2015/12/03/CoordinatorLayout 学习笔记 --可折叠ToolBar（一）/" class="article-date">
+      <time datetime="2015-12-02T16:00:00.000Z" itemprop="datePublished">2015-12-03</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/12/03/CoordinatorLayout 学习笔记 --可折叠ToolBar（一）/">CoordinatorLayout 学习笔记 --可折叠ToolBar（一）</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <h2 id=""><a href="#" class="headerlink" title=" "></a><Excerpt in index | 首页摘要> </h2><p>上一篇我们介绍了NestedScrollingParent的使用实例，其实关于’com.android.support:design’这个包有很多东西值得我们学习。一方面是google一直推崇的material设计风格可以让我们的界面更加符合当下app设计潮流，另一方面design包中的代码有兴趣可以阅读一下。今天我们介绍的是可折叠ToolBar，这是design库中的一部分，我们会简单介绍它的用法，重点是我们会根据源码来看一下google的大神们是如何实现的。</p>
+<hr>
+<p>+
+          
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+
+      
+      
+        <p class="article-more-link">
+          <a href="/2015/12/03/CoordinatorLayout 学习笔记 --可折叠ToolBar（一）/#more">more >></a>
+        </p>
       
       <div class="clearfix"></div>
     </div>
